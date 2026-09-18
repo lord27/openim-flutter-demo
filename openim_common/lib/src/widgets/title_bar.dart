@@ -25,9 +25,20 @@ class TitleBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+      value: AppThemeService.current.isDark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
       child: Container(
-        color: backgroundColor ?? Styles.c_FFFFFF,
+        decoration: BoxDecoration(
+                  color: backgroundColor ?? Styles.c_surface,
+                  gradient: (backgroundColor == null && AppThemeService.current.isDark)
+                      ? LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: AppThemeService.current.appBarGradient,
+                        )
+                      : null,
+                ),
         padding: EdgeInsets.only(top: mq.padding.top),
         child: Container(
           height: height,
@@ -180,7 +191,7 @@ class TitleBar extends StatelessWidget implements PreferredSizeWidget {
     this.showUnderline = false,
     Function()? onTap,
   })  : height = 44.h,
-        backgroundColor = backgroundColor ?? Styles.c_FFFFFF,
+        backgroundColor = backgroundColor ?? Styles.c_surface,
         center = Expanded(
             child: (title ?? '').toText
               ..style = (titleStyle ?? Styles.ts_0C1C33_17sp_semibold)
@@ -194,7 +205,7 @@ class TitleBar extends StatelessWidget implements PreferredSizeWidget {
               ImageRes.backBlack.toImage
                 ..width = 24.w
                 ..height = 24.h
-                ..color = backIconColor,
+                ..color = backIconColor ?? AppThemeService.current.backIcon,
               if (null != leftTitle) leftTitle.toText..style = (leftTitleStyle ?? Styles.ts_0C1C33_17sp_semibold),
             ],
           ),
@@ -205,7 +216,7 @@ class TitleBar extends StatelessWidget implements PreferredSizeWidget {
     this.showUnderline = false,
     Function()? onClickAddContacts,
   })  : height = 44.h,
-        backgroundColor = Styles.c_FFFFFF,
+        backgroundColor = Styles.c_surface,
         center = Spacer(),
         left = StrRes.contacts.toText..style = Styles.ts_0C1C33_20sp_semibold,
         right = Row(
@@ -222,7 +233,7 @@ class TitleBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.showUnderline = false,
   })  : height = 44.h,
-        backgroundColor = Styles.c_FFFFFF,
+        backgroundColor = Styles.c_surface,
         center = null,
         left = StrRes.workbench.toText..style = Styles.ts_0C1C33_20sp_semibold,
         right = null;
@@ -237,7 +248,7 @@ class TitleBar extends StatelessWidget implements PreferredSizeWidget {
     Function()? onCleared,
     ValueChanged<String>? onChanged,
   })  : height = 44.h,
-        backgroundColor = Styles.c_FFFFFF,
+        backgroundColor = Styles.c_surface,
         center = Expanded(
           child: Container(
               child: SearchBox(

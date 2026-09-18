@@ -35,7 +35,7 @@ class CustomDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.r),
           child: Container(
             width: 280.w,
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -56,7 +56,7 @@ class CustomDialog extends StatelessWidget {
                 Row(
                   children: [
                     _button(
-                      bgColor: Styles.c_FFFFFF,
+                      bgColor: Styles.c_surface,
                       text: leftText ?? StrRes.cancel,
                       textStyle: Styles.ts_0C1C33_17sp,
                       onTap: onTapLeft ?? () => Get.back(result: false),
@@ -67,7 +67,7 @@ class CustomDialog extends StatelessWidget {
                       height: 48.h,
                     ),
                     _button(
-                      bgColor: Styles.c_FFFFFF,
+                      bgColor: Styles.c_surface,
                       text: rightText ?? StrRes.determine,
                       textStyle: Styles.ts_0089FF_17sp,
                       onTap: onTapRight ?? () => Get.back(result: true),
@@ -126,7 +126,7 @@ class ForwardHintDialog extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
             margin: EdgeInsets.symmetric(horizontal: 36.w),
             decoration: BoxDecoration(
-              color: Styles.c_FFFFFF,
+              color: Styles.c_surface,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Column(

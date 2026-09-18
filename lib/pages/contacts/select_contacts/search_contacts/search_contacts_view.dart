@@ -38,7 +38,7 @@ class SelectContactsFromSearchPage extends StatelessWidget {
   Widget _buildItemView(dynamic info) {
     Widget buildChild() => Ink(
           height: 64.h,
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           child: InkWell(
             onTap: selectContactsLogic.onTap(info),
             child: Container(

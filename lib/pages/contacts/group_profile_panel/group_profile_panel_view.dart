@@ -25,7 +25,7 @@ class GroupProfilePanelPage extends StatelessWidget {
               if (logic.members.isNotEmpty) _buildGroupMemberList(),
               Container(
                 height: 56.h,
-                color: Styles.c_FFFFFF,
+                color: Styles.c_surface,
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Row(
                   children: [
@@ -39,7 +39,7 @@ class GroupProfilePanelPage extends StatelessWidget {
               const Spacer(),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                color: Styles.c_FFFFFF,
+                color: Styles.c_surface,
                 child: Button(
                   text: logic.isJoined.value
                       ? StrRes.enterGroup
@@ -54,7 +54,7 @@ class GroupProfilePanelPage extends StatelessWidget {
 
   Widget _buildBaseInfo() => Container(
         height: 80.h,
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         margin: EdgeInsets.only(bottom: 10.h),
         child: Row(
@@ -96,7 +96,7 @@ class GroupProfilePanelPage extends StatelessWidget {
       );
 
   Widget _buildGroupMemberList() => Container(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         margin: EdgeInsets.only(bottom: 10.h),
         child: Column(

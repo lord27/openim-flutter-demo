@@ -170,7 +170,7 @@ class _RichTextInputBoxState extends State<RichTextInputBox> {
 
   Widget get _textFiled => Container(
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(4.r),
         ),
         child: ChatTextField(

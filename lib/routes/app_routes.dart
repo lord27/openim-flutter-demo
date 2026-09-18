@@ -20,6 +20,7 @@ abstract class AppRoutes {
   static const accountSetup = '/account_setup';
   static const blacklist = '/blacklist';
   static const languageSetup = '/language_setup';
+  static const themeSetup = '/theme_setup';
   static const aboutUs = '/about_us';
   static const groupChatSetup = '/group_chat_setup';
   static const groupManage = '/group_manage';

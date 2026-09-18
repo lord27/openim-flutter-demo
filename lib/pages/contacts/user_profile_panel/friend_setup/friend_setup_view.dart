@@ -72,7 +72,7 @@ class FriendSetupPage extends StatelessWidget {
         child: Ink(
           height: 46.h,
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: borderRadius ?? BorderRadius.circular(6.r),
           ),
           child: InkWell(

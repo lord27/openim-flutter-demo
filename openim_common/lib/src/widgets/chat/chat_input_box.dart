@@ -146,7 +146,7 @@ class _ChatInputBoxState extends State<ChatInputBox> /*with TickerProviderStateM
   Widget get _textFiled => Container(
         margin: EdgeInsets.only(top: 10.h, bottom: _showQuoteView ? 4.h : 10.h),
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(4.r),
         ),
         child: ChatTextField(
@@ -225,7 +225,7 @@ class _SubView extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.w),
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: BorderRadius.circular(4.r),
           ),
           child: Row(

@@ -62,7 +62,7 @@ class MinePage extends StatelessWidget {
         margin: EdgeInsets.only(left: 16.w, right: 16.w, top: 90.h),
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(6.r),
         ),
         child: Row(
@@ -113,7 +113,7 @@ class MinePage extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         child: Ink(
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(isTopRadius ? 6.r : 0),
               topLeft: Radius.circular(isTopRadius ? 6.r : 0),

@@ -36,7 +36,7 @@ class BlacklistPage extends StatelessWidget {
       Ink(
         height: 62.h,
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           border: underline
               ? BorderDirectional(
                   bottom: BorderSide(

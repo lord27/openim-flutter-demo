@@ -57,7 +57,7 @@ class GroupSetupPage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(6.r),
         ),
         child: Row(
@@ -123,7 +123,7 @@ class GroupSetupPage extends StatelessWidget {
 
   Widget _buildMemberView() => Container(
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(6.r),
         ),
         margin: EdgeInsets.symmetric(horizontal: 10.w),
@@ -256,7 +256,7 @@ class GroupSetupPage extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: 10.w),
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(isTopRadius ? 6.r : 0),
               topLeft: Radius.circular(isTopRadius ? 6.r : 0),

@@ -155,6 +155,8 @@ class AppNavigator {
 
   static startLanguageSetup() => Get.toNamed(AppRoutes.languageSetup);
 
+  static startThemeSetup() => Get.toNamed(AppRoutes.themeSetup);
+
   static startAboutUs() => Get.toNamed(AppRoutes.aboutUs);
 
   static startChatSetup({

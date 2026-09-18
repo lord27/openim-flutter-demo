@@ -70,6 +70,8 @@ import '../pages/mine/blacklist/blacklist_binding.dart';
 import '../pages/mine/blacklist/blacklist_view.dart';
 import '../pages/mine/language_setup/language_setup_binding.dart';
 import '../pages/mine/language_setup/language_setup_view.dart';
+import '../pages/mine/theme_setup/theme_setup_binding.dart';
+import '../pages/mine/theme_setup/theme_setup_view.dart';
 import '../pages/mine/my_info/my_info_binding.dart';
 import '../pages/mine/my_info/my_info_view.dart';
 import '../pages/register/register_binding.dart';
@@ -189,6 +191,11 @@ class AppPages {
       name: AppRoutes.languageSetup,
       page: () => LanguageSetupPage(),
       binding: LanguageSetupBinding(),
+    ),
+    _pageBuilder(
+      name: AppRoutes.themeSetup,
+      page: () => ThemeSetupPage(),
+      binding: ThemeSetupBinding(),
     ),
     _pageBuilder(
       name: AppRoutes.aboutUs,

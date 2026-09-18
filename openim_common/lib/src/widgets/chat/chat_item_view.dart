@@ -8,6 +8,7 @@ import 'package:openim_common/openim_common.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'chat_card_view.dart';
+import 'chat_location_view.dart';
 import 'chat_file_view.dart';
 import 'chat_notice_view.dart';
 import 'chat_video_view.dart';
@@ -71,6 +72,7 @@ class ChatItemView extends StatefulWidget {
     this.mediaItemBuilder,
     this.itemViewBuilder,
     this.customTypeBuilder,
+    this.onTapLocationView,
     this.notificationTypeBuilder,
     this.sendStatusSubject,
     this.visibilityChange,
@@ -98,6 +100,7 @@ class ChatItemView extends StatefulWidget {
   final ItemViewBuilder? mediaItemBuilder;
   final ItemViewBuilder? itemViewBuilder;
   final CustomTypeBuilder? customTypeBuilder;
+  final Function(Message message)? onTapLocationView;
   final NotificationTypeBuilder? notificationTypeBuilder;
 
   final Subject<MsgStreamEv<bool>>? sendStatusSubject;
@@ -202,6 +205,13 @@ class _ChatItemViewState extends State<ChatItemView> {
     } else if (_message.isVideoType) {
       isBubbleBg = false;
       child = widget.mediaItemBuilder?.call(context, _message);
+    } else if (_message.contentType == MessageType.location) {
+      isBubbleBg = false;
+      child = ChatLocationView(
+        isISend: _isISend,
+        message: _message,
+        onTapView: () => widget.onTapLocationView?.call(_message),
+      );
     } else if (_message.isFileType) {
       isBubbleBg = false;
       child = ChatFileView(message: _message);

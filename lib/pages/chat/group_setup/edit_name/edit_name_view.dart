@@ -68,7 +68,7 @@ class EditGroupNamePage extends StatelessWidget {
           ..style = Styles.ts_0C1C33_17sp
           ..onTap = logic.save,
       ),
-      backgroundColor: Styles.c_FFFFFF,
+      backgroundColor: Styles.c_surface,
       body: Column(
         children: [
           22.verticalSpace,

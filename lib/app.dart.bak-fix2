@@ -1,0 +1,72 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:openim_common/openim_common.dart';
+
+import 'core/controller/im_controller.dart';
+import 'routes/app_pages.dart';
+import 'widgets/app_view.dart';
+
+class ChatApp extends StatefulWidget {
+  const ChatApp({Key? key}) : super(key: key);
+
+  @override
+  State<ChatApp> createState() => _ChatAppState();
+}
+
+class _ChatAppState extends State<ChatApp> {
+  @override
+  void initState() {
+    super.initState();
+    AppThemeService.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    AppThemeService.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AppView(
+      builder: (locale, builder) => GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        enableLog: true,
+        builder: builder,
+        translations: TranslationService(),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        fallbackLocale: TranslationService.fallbackLocale,
+        locale: locale,
+        localeResolutionCallback: (locale, list) {
+          Get.locale ??= locale;
+          return locale;
+        },
+        supportedLocales: const [Locale('zh', 'CN'), Locale('en', 'US')],
+        getPages: AppPages.routes,
+        initialBinding: InitBinding(),
+        initialRoute: AppRoutes.splash,
+        theme: AppThemeService.buildTheme(),
+      ),
+    );
+  }
+}
+
+class InitBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<IMController>(IMController());
+    Get.put<PushController>(PushController());
+    Get.put<CacheController>(CacheController());
+  }
+}

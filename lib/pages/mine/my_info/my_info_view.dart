@@ -78,7 +78,7 @@ class MyInfoPage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         margin: EdgeInsets.symmetric(horizontal: 10.w),
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(6.r),
             topRight: Radius.circular(6.r),

@@ -68,8 +68,8 @@ class HomePage extends StatelessWidget {
           tabs: _tabs(),
           navBarBuilder: (navBarConfig) => Style1BottomNavBar(
             navBarConfig: navBarConfig,
-            navBarDecoration: const NavBarDecoration(
-              color: Colors.white,
+            navBarDecoration: NavBarDecoration(
+              color: Styles.c_surface,
               boxShadow: [
                 BoxShadow(color: Colors.black12, blurRadius: 0.5, spreadRadius: 0.5),
               ],

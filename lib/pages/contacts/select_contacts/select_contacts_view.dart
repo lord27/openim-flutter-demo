@@ -72,7 +72,7 @@ class SelectContactsPage extends StatelessWidget {
   }) =>
       Ink(
         height: 56.h,
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         child: InkWell(
           onTap: onTap,
           child: Container(
@@ -93,7 +93,7 @@ class SelectContactsPage extends StatelessWidget {
   Widget _buildRecentConversationsItemView(ConversationInfo info) {
     Widget buildChild() => Ink(
           height: 56.h,
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           child: InkWell(
             onTap: logic.onTap(info),
             child: Container(
@@ -137,7 +137,7 @@ class CheckedConfirmView extends StatelessWidget {
     return Container(
       height: 66.h,
       decoration: BoxDecoration(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         boxShadow: [
           BoxShadow(
             offset: Offset(0, -1.h),
@@ -203,7 +203,7 @@ class SelectedContactsListView extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(maxHeight: 548.h),
       decoration: BoxDecoration(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(6.r),
           topRight: Radius.circular(6.r),
@@ -267,7 +267,7 @@ class SelectedContactsListView extends StatelessWidget {
     return Container(
       height: 64.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      color: Styles.c_FFFFFF,
+      color: Styles.c_surface,
       child: Row(
         children: [
           AvatarView(url: faceURL, text: name, isGroup: isGroup),

@@ -103,7 +103,7 @@ class PopButton extends StatelessWidget {
 
   Widget _buildPopBgView({Widget? child}) => Container(
         decoration: BoxDecoration(
-          color: bgColor ?? Styles.c_FFFFFF,
+          color: bgColor ?? Styles.c_surface,
           borderRadius: BorderRadius.circular(bgRadius ?? 8.r),
           boxShadow: [
             BoxShadow(

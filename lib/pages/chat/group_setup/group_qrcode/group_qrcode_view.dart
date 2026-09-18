@@ -25,7 +25,7 @@ class GroupQrcodePage extends StatelessWidget {
             width: 331.w,
             height: 460.h,
             decoration: BoxDecoration(
-              color: Styles.c_FFFFFF,
+              color: Styles.c_surface,
               borderRadius: BorderRadius.circular(10.r),
               boxShadow: [
                 BoxShadow(
@@ -77,13 +77,13 @@ class GroupQrcodePage extends StatelessWidget {
                       height: 180.w,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Styles.c_FFFFFF,
+                        color: Styles.c_surface,
                         border: Border.all(color: Styles.c_E8EAEF, width: 4.w),
                       ),
                       child: QrImageView(
                         data: logic.buildQRContent(),
                         size: 140.w,
-                        backgroundColor: Styles.c_FFFFFF,
+                        backgroundColor: Styles.c_surface,
                       ),
                     ),
                   ),

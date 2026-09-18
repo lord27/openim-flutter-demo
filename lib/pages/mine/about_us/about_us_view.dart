@@ -20,7 +20,7 @@ class AboutUsPage extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Styles.c_FFFFFF,
+              color: Styles.c_surface,
               borderRadius: BorderRadius.circular(6.r),
             ),
             margin: EdgeInsets.symmetric(

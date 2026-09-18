@@ -156,5 +156,8 @@
             tools:targetApi="q"
             android:enabled="true"
             android:exported="false"/>
+            <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="36f4c77d9728ecd6ea8262e32e72bb4a" />
     </application>
 </manifest>

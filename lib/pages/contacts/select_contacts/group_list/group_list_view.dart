@@ -26,7 +26,7 @@ class SelectContactsFromGroupPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 10.h),
               child: Ink(
                 height: 64.h,
-                color: Styles.c_FFFFFF,
+                color: Styles.c_surface,
                 child: InkWell(
                   onTap: logic.selectAll,
                   child: Container(
@@ -59,7 +59,7 @@ class SelectContactsFromGroupPage extends StatelessWidget {
   Widget _buildItemView(GroupInfo info) {
     Widget buildChild() => Ink(
           height: 64.h,
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           child: InkWell(
             onTap: selectContactsLogic.onTap(info),
             child: Container(

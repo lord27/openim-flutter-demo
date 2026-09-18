@@ -35,7 +35,7 @@ class FriendRequestsPage extends StatelessWidget {
       height: 68.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         border: BorderDirectional(
           bottom: BorderSide(
             color: Styles.c_F8F9FA,

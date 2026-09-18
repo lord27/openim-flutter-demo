@@ -30,7 +30,7 @@ class GroupRequestsPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         border: BorderDirectional(
           bottom: BorderSide(color: Styles.c_F8F9FA, width: 1.h),
         ),

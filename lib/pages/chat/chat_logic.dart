@@ -744,7 +744,7 @@ class ChatLogic extends SuperController {
         Container(
           constraints: const BoxConstraints(maxHeight: 600),
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
           ),
           child: Column(

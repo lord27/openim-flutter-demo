@@ -259,6 +259,7 @@ class StrRes {
   static String get toolboxAlbum => 'toolboxAlbum'.tr;
 
   static String get toolboxVideo => 'toolboxVideo'.tr;
+  static String get locationSend => 'locationSend'.tr;
 
   static String get toolboxEmoji => 'toolboxEmoji'.tr;
 
@@ -571,6 +572,20 @@ class StrRes {
   static String get confirmClearChatHistory => 'confirmClearChatHistory'.tr;
 
   static String get languageSetup => 'languageSetup'.tr;
+
+  static String get themeAppearance => 'themeAppearance'.tr;
+
+  static String get themeClassic => 'themeClassic'.tr;
+
+  static String get themeCyberCyan => 'themeCyberCyan'.tr;
+
+  static String get themeMatrixGreen => 'themeMatrixGreen'.tr;
+
+  static String get themeNeonPurple => 'themeNeonPurple'.tr;
+
+  static String get themeMechaRed => 'themeMechaRed'.tr;
+
+  static String get themeIceBlue => 'themeIceBlue'.tr;
 
   static String get language => 'language'.tr;
 

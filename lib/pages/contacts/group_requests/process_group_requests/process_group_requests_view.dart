@@ -17,7 +17,7 @@ class ProcessGroupRequestsPage extends StatelessWidget {
       appBar: TitleBar.back(title: StrRes.newGroup),
       backgroundColor: Styles.c_F8F9FA,
       body: Container(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         padding: EdgeInsets.symmetric(
           horizontal: 16.w,
           vertical: 16.h,
@@ -108,7 +108,7 @@ class ProcessGroupRequestsPage extends StatelessWidget {
         child: Ink(
           height: 44.h,
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             border: Border.all(
               color: Styles.c_E8EAEF,
               width: 1,

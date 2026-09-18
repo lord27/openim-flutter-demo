@@ -28,6 +28,12 @@ class AccountSetupPage extends StatelessWidget {
                   showRightArrow: true,
                 ),
                 _buildItemView(
+                  label: StrRes.themeAppearance,
+                  value: logic.curThemeName.value,
+                  onTap: logic.themeSetting,
+                  showRightArrow: true,
+                ),
+                _buildItemView(
                   label: StrRes.languageSetup,
                   value: logic.curLanguage.value,
                   onTap: logic.languageSetting,
@@ -56,7 +62,7 @@ class AccountSetupPage extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 10.w),
         child: Ink(
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(isTopRadius ? 6.r : 0),
               topLeft: Radius.circular(isTopRadius ? 6.r : 0),

@@ -17,7 +17,7 @@ class AddContactsBySearchPage extends StatelessWidget {
       appBar: TitleBar.back(
         title: logic.isSearchUser ? StrRes.addFriend : StrRes.addGroup,
       ),
-      backgroundColor: Styles.c_FFFFFF,
+      backgroundColor: Styles.c_surface,
       body: Column(
         children: [
           SearchBox(

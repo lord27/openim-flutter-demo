@@ -57,7 +57,7 @@ class UserProfilePanelPage extends StatelessWidget {
   }
 
   Widget _buildBaseInfoView() => Container(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         height: 80.h,
         margin: EdgeInsets.only(bottom: 10.h),
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -115,7 +115,7 @@ class UserProfilePanelPage extends StatelessWidget {
                           ImageRes.addContacts.toImage
                             ..width = 21.w
                             ..height = 21.h
-                            ..color = Styles.c_FFFFFF,
+                            ..color = Styles.kWhite,
                           2.horizontalSpace,
                           StrRes.add.toText..style = Styles.ts_FFFFFF_14sp,
                         ],
@@ -133,7 +133,7 @@ class UserProfilePanelPage extends StatelessWidget {
       return Container();
     }
     return Container(
-      color: Styles.c_FFFFFF,
+      color: Styles.c_surface,
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Table(
@@ -194,7 +194,7 @@ class UserProfilePanelPage extends StatelessWidget {
       Container(
         margin: EdgeInsets.only(bottom: addMargin ? 10.h : 0),
         child: Ink(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           height: 56.h,
           child: InkWell(
             onTap: onTap,

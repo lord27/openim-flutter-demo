@@ -39,7 +39,7 @@ class GroupMemberListPage extends StatelessWidget {
                 onTap: logic.search,
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                  color: Styles.c_FFFFFF,
+                  color: Styles.c_surface,
                   child: const SearchBox(),
                 ),
               ),
@@ -49,7 +49,7 @@ class GroupMemberListPage extends StatelessWidget {
                   onTap: logic.selectEveryone,
                   child: Container(
                     height: 64.h,
-                    color: Styles.c_FFFFFF,
+                    color: Styles.c_surface,
                     margin: EdgeInsets.symmetric(vertical: 10.h),
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     alignment: Alignment.centerLeft,
@@ -95,7 +95,7 @@ class GroupMemberListPage extends StatelessWidget {
           child: Container(
             height: 64.h,
             padding: EdgeInsets.symmetric(horizontal: 16.w),
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             child: Row(
               children: [
                 if (logic.isMultiSelMode)
@@ -126,7 +126,7 @@ class GroupMemberListPage extends StatelessWidget {
   Widget _buildCheckedConfirmView() => Container(
         height: 66.h,
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           boxShadow: [
             BoxShadow(
               offset: Offset(0, -1.h),
@@ -193,7 +193,7 @@ class SelectedMemberListView extends StatelessWidget {
     return Container(
       constraints: BoxConstraints(maxHeight: 548.h),
       decoration: BoxDecoration(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(6.r),
           topRight: Radius.circular(6.r),
@@ -240,7 +240,7 @@ class SelectedMemberListView extends StatelessWidget {
   Widget _buildItemView(GroupMembersInfo membersInfo) => Container(
         height: 64.h,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         child: Row(
           children: [
             AvatarView(

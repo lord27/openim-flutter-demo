@@ -62,7 +62,7 @@ class LanguageSetupPage extends StatelessWidget {
         child: Ink(
           height: 60.h,
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(isTopRadius ? 6.r : 0),
               topRight: Radius.circular(isTopRadius ? 6.r : 0),

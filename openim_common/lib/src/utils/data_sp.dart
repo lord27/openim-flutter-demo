@@ -26,6 +26,7 @@ class DataSp {
 
   static init() async {
     await SpUtil().init();
+    AppThemeService.init();
   }
 
   static String getKey(String key, {String key2 = ""}) {

@@ -30,7 +30,7 @@ class ChatSetupPage extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(6.r),
         ),
         child: Row(
@@ -98,7 +98,7 @@ class ChatSetupPage extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: 10.w),
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(isTopRadius ? 6.r : 0),
               topLeft: Radius.circular(isTopRadius ? 6.r : 0),

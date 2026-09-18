@@ -49,7 +49,7 @@ class AddContactsMethodPage extends StatelessWidget {
     Function()? onTap,
   }) =>
       Ink(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         child: InkWell(
           onTap: onTap,
           child: SizedBox(

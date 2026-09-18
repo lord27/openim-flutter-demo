@@ -7,10 +7,12 @@ import '../../../core/controller/im_controller.dart';
 class AccountSetupLogic extends GetxController {
   final imLogic = Get.find<IMController>();
   final curLanguage = "".obs;
+  final curThemeName = "".obs;
 
   @override
   void onReady() {
     _updateLanguage();
+    _updateTheme();
     super.onReady();
   }
 
@@ -37,6 +39,12 @@ class AccountSetupLogic extends GetxController {
   void blacklist() => AppNavigator.startBlacklist();
 
   void languageSetting() => AppNavigator.startLanguageSetup();
+
+  void themeSetting() => AppNavigator.startThemeSetup();
+
+  void _updateTheme() {
+    curThemeName.value = AppThemeService.current.localName;
+  }
 
   void _updateLanguage() {
     var index = DataSp.getLanguage() ?? 0;

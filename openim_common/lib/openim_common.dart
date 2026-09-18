@@ -21,6 +21,7 @@ export 'src/models/signaling_info.dart';
 export 'src/res/images.dart';
 export 'src/res/strings.dart';
 export 'src/res/styles.dart';
+export 'src/res/app_themes.dart';
 export 'src/urls.dart';
 export 'src/utils/data_sp.dart';
 export 'src/utils/http_util.dart';

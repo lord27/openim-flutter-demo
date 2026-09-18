@@ -22,7 +22,7 @@ class NewMessageIndicator extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 7.h),
           constraints: BoxConstraints(minHeight: 31.h),
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Styles.c_surface,
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(color: Styles.c_E8EAEF, width: 1),
             boxShadow: [

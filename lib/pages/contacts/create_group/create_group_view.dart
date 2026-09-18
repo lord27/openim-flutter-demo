@@ -27,7 +27,7 @@ class CreateGroupPage extends StatelessWidget {
                 _buildGroupMemberView(),
                 const Spacer(),
                 Container(
-                  color: Styles.c_FFFFFF,
+                  color: Styles.c_surface,
                   padding: EdgeInsets.symmetric(
                     horizontal: 16.w,
                     vertical: 12.h,
@@ -49,7 +49,7 @@ class CreateGroupPage extends StatelessWidget {
         margin: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, 12.h),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(6.r),
         ),
         child: Obx(() => Row(
@@ -86,7 +86,7 @@ class CreateGroupPage extends StatelessWidget {
 
   Widget _buildGroupMemberView() => Obx(() => Container(
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: BorderRadius.circular(6.r),
         ),
         margin: EdgeInsets.symmetric(horizontal: 10.w),

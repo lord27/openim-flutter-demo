@@ -92,7 +92,7 @@ class BottomSheetView extends StatelessWidget {
   }) =>
       Ink(
         decoration: BoxDecoration(
-          color: Styles.c_FFFFFF,
+          color: Styles.c_surface,
           borderRadius: borderRadius,
         ),
         child: InkWell(

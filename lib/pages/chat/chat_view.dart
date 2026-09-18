@@ -164,7 +164,7 @@ class ChatPage extends StatelessWidget {
               child: WaterMarkBgView(
                 text: '',
                 path: logic.background.value,
-                backgroundColor: Styles.c_FFFFFF,
+                backgroundColor: Styles.c_surface,
                 floatView: _groupCallHintView,
                 bottomView: ChatInputBox(
                   forceCloseToolboxSub: logic.forceCloseToolbox,

@@ -32,7 +32,7 @@ class SendVerificationApplicationPage extends StatelessWidget {
               ),
               Container(
                 height: 122.h,
-                color: Styles.c_FFFFFF,
+                color: Styles.c_surface,
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 child: TextField(
                   controller: logic.inputCtrl,

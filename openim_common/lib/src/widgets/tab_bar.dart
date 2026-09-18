@@ -31,7 +31,7 @@ class CustomTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Styles.c_FFFFFF,
+        color: Styles.c_surface,
         border: showUnderline
             ? BorderDirectional(
                 bottom: BorderSide(color: Styles.c_E8EAEF, width: 1))
