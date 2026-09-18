@@ -143,7 +143,7 @@ class ConversationLogic extends GetxController {
     } catch (e, s) {
       Logger.print('------e:$e s:$s');
     }
-    return '[${StrRes.unsupportedMessage}]';
+    return '';
   }
 
   String? getAvatar(ConversationInfo info) {

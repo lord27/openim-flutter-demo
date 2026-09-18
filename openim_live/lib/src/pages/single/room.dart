@@ -57,8 +57,18 @@ class _SingleRoomViewState extends SignalState<SingleRoomView> {
 
   @override
   Future<void> connect() async {
-    final url = certificate.liveURL!;
-    final token = certificate.token!;
+    var url = (certificate.liveURL ?? '').trim();
+    if (url.isEmpty) {
+      url = 'ws://${Config.serverIp}:7880';
+      Logger.print('RTC liveURL empty, fallback -> $url');
+    }
+    final token = (certificate.token ?? '').trim();
+    if (token.isEmpty) {
+      Logger.print('RTC token empty, abort connect. url=$url');
+      widget.onError?.call('RTC certificate invalid: token is empty', null);
+      widget.onClose?.call();
+      return;
+    }
     final busyLineUsers = certificate.busyLineUserIDList ?? [];
     if (busyLineUsers.isNotEmpty) {
       widget.onBusyLine?.call();

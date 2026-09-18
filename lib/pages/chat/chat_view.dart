@@ -101,7 +101,7 @@ class ChatPage extends StatelessWidget {
     final isOutgoing = message.sendID == OpenIM.iMManager.userID;
 
     if (message.isVideoType) {
-      return const SizedBox();
+      return ChatVideoView(message: message);
     } else {
       return ChatPictureView(
         isISend: isOutgoing,
@@ -174,9 +174,20 @@ class ChatPage extends StatelessWidget {
                   directionalText: logic.directionalText(),
                   onCloseDirectional: logic.onClearDirectional,
                   onSend: (v) => logic.sendTextMsg(),
-                  toolbox: ChatToolBox(
-                    onTapAlbum: logic.onTapAlbum,
-                    onTapCall: logic.isGroupChat ? null : logic.call,
+                  toolbox: Obx(
+                    () => logic.showEmojiPanel.value
+                        ? ChatEmojiPanel(
+                            onSelected: logic.insertEmoji,
+                            onBack: logic.closeEmojiPanel,
+                          )
+                        : ChatToolBox(
+                            onTapAlbum: logic.onTapAlbum,
+                            onTapCall: logic.isGroupChat ? null : logic.call,
+                            onTapVideo: logic.onTapVideo,
+                            onTapFile: logic.onTapFile,
+                            onTapCard: logic.onTapCard,
+                            onTapEmoji: logic.openEmojiPanel,
+                          ),
                   ),
                   voiceRecordBar: const SizedBox(),
                 ),

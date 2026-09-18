@@ -16,7 +16,10 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:wechat_camera_picker/wechat_camera_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:video_player/video_player.dart';
 import 'package:openim_live/openim_live.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../core/controller/app_controller.dart';
 import '../../core/controller/im_controller.dart';
@@ -31,6 +34,8 @@ class ChatLogic extends SuperController {
   final appLogic = Get.find<AppController>();
   final conversationLogic = Get.find<ConversationLogic>();
   final cacheLogic = Get.find<CacheController>();
+
+  bool _sendingVideo = false;
 
   final inputCtrl = TextEditingController();
   final focusNode = FocusNode();
@@ -365,6 +370,76 @@ class ChatLogic extends SuperController {
     }
   }
 
+  /// 内置 32x32 纯灰 PNG（96 字节）。
+  /// 用于取不到视频首帧时的兜底：SDK 的 *FromFullPath 内部会直接
+  /// CopyFile(snapshotPath)，传空串必然失败并让 Dart 侧 jsonDecode('')
+  /// 抛 FormatException: Unexpected end of input。
+  static const String _kFallbackThumbB64 =
+      'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAJ0lEQVR42u3NMQ0AAAwDoAqrf11VsWMJGCA9FoFAIBAIBAKBQPAlGAvy0B+nI4XhAAAAAElFTkSuQmCC';
+
+  /// 生成一个真实存在的视频缩略图文件，返回其绝对路径（保证非空）。
+  Future<String> _buildVideoSnapshot({AssetEntity? entity}) async {
+    Uint8List? bytes;
+    var ext = 'png';
+    if (entity != null) {
+      try {
+        final data = await entity
+            .thumbnailDataWithSize(const ThumbnailSize(400, 400), quality: 90)
+            .timeout(const Duration(seconds: 15));
+        if (data != null && data.isNotEmpty) {
+          bytes = data;
+          ext = 'jpg';
+        }
+      } catch (_) {}
+    }
+    bytes ??= base64Decode(_kFallbackThumbB64);
+    final dir = await getTemporaryDirectory();
+    final file = File(
+      '${dir.path}/oim_snapshot_${DateTime.now().millisecondsSinceEpoch}.$ext',
+    );
+    await file.writeAsBytes(bytes, flush: true);
+    Logger.print('--------video snapshot-----$ext ${file.path} ${bytes.length}');
+    return file.path;
+  }
+
+  /// 优先用相册元数据取时长，退化到 video_player 解析，最后兜底 0。
+  Future<int> _resolveVideoDuration(String path, AssetEntity? entity) async {
+    final fromEntity = entity?.videoDuration.inSeconds ?? 0;
+    if (fromEntity > 0) return fromEntity;
+    try {
+      final controller = VideoPlayerController.file(File(path));
+      await controller.initialize().timeout(const Duration(seconds: 10));
+      final duration = controller.value.duration.inSeconds;
+      await controller.dispose();
+      return duration;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  Future sendVideo({
+    required String path,
+    AssetEntity? entity,
+    bool sendNow = true,
+  }) async {
+    final name = path.split('/').last;
+    final duration = await _resolveVideoDuration(path, entity);
+    final snapshotPath = await _buildVideoSnapshot(entity: entity);
+    final message =
+        await OpenIM.iMManager.messageManager.createVideoMessageFromFullPath(
+      videoPath: path,
+      videoType: _videoMimeTypeOf(name),
+      duration: duration,
+      snapshotPath: snapshotPath,
+    );
+    if (sendNow) {
+      return _sendMessage(message);
+    } else {
+      messageList.add(message);
+      tempMessages.add(message);
+    }
+  }
+
   sendForwardRemarkMsg(
     String content, {
     String? userId,
@@ -562,7 +637,165 @@ class ChatLogic extends SuperController {
   }
 
   void closeToolbox() {
+    showEmojiPanel.value = false;
     forceCloseToolbox.addSafely(true);
+  }
+
+  final showEmojiPanel = false.obs;
+
+  void openEmojiPanel() {
+    showEmojiPanel.value = true;
+  }
+
+  void closeEmojiPanel() {
+    showEmojiPanel.value = false;
+  }
+
+  void insertEmoji(String emoji) {
+    final selection = inputCtrl.selection;
+    final text = inputCtrl.text;
+    final base = selection.baseOffset >= 0 ? selection.baseOffset : text.length;
+    final extent = selection.extentOffset >= 0 ? selection.extentOffset : text.length;
+    final start = base < extent ? base : extent;
+    final end = base < extent ? extent : base;
+    final newText = text.replaceRange(start, end, emoji);
+    inputCtrl.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: start + emoji.length),
+    );
+  }
+
+  String _videoMimeTypeOf(String name) {
+    final idx = name.lastIndexOf('.');
+    final ext = idx >= 0 ? name.substring(idx + 1).toLowerCase() : 'mp4';
+    switch (ext) {
+      case 'mov':
+        return 'video/quicktime';
+      case 'avi':
+        return 'video/x-msvideo';
+      case 'mkv':
+        return 'video/x-matroska';
+      case 'webm':
+        return 'video/webm';
+      case '3gp':
+        return 'video/3gpp';
+      case 'm4v':
+      case 'mp4':
+      default:
+        return 'video/mp4';
+    }
+  }
+
+  void onTapFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles();
+      final picked = result?.files.single;
+      final path = picked?.path;
+      if (path == null) return;
+      if (!File(path).existsSync()) {
+        IMViews.showToast('文件不存在或无法读取');
+        return;
+      }
+      final message =
+          await OpenIM.iMManager.messageManager.createFileMessageFromFullPath(
+        filePath: path,
+        fileName: picked!.name,
+      );
+      await _sendMessage(message);
+    } catch (e) {
+      IMViews.showToast('发送文件失败: $e');
+    }
+  }
+
+  void onTapVideo() async {
+    if (_sendingVideo) return;
+    try {
+      final result = await FilePicker.platform.pickFiles(type: FileType.video);
+      final picked = result?.files.single;
+      final path = picked?.path;
+      if (path == null) return;
+      final file = File(path);
+      if (!file.existsSync()) {
+        IMViews.showToast('视频文件不存在或无法读取');
+        return;
+      }
+      _sendingVideo = true;
+      final duration = await _resolveVideoDuration(path, null);
+      final snapshotPath = await _buildVideoSnapshot();
+      final message =
+          await OpenIM.iMManager.messageManager.createVideoMessageFromFullPath(
+        videoPath: path,
+        videoType: _videoMimeTypeOf(picked!.name),
+        duration: duration,
+        snapshotPath: snapshotPath,
+      );
+      await _sendMessage(message);
+    } catch (e) {
+      IMViews.showToast('发送视频失败: $e');
+    } finally {
+      _sendingVideo = false;
+    }
+  }
+
+  void onTapCard() async {
+    try {
+      final friends = await OpenIM.iMManager.friendshipManager.getFriendList();
+      Get.bottomSheet(
+        Container(
+          constraints: const BoxConstraints(maxHeight: 600),
+          decoration: BoxDecoration(
+            color: Styles.c_FFFFFF,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(StrRes.toolboxCard,
+                    style: const TextStyle(fontSize: 16, color: Color(0xFF0C1C33))),
+              ),
+              Expanded(
+                child: friends.isEmpty
+                    ? Center(
+                        child: Text(StrRes.toolboxCard,
+                            style: const TextStyle(fontSize: 13, color: Color(0xFF8E9AB0))))
+                    : ListView.builder(
+                        itemCount: friends.length,
+                        itemBuilder: (_, index) {
+                          final friend = friends[index];
+                          final name = (friend.remark != null && friend.remark!.isNotEmpty)
+                              ? friend.remark!
+                              : (friend.nickname ?? '');
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: (friend.faceURL ?? '').isNotEmpty
+                                  ? NetworkImage(friend.faceURL!)
+                                  : null,
+                              child: (friend.faceURL ?? '').isEmpty
+                                  ? Text(name.isNotEmpty ? name.characters.first : '?')
+                                  : null,
+                            ),
+                            title: Text(name),
+                            onTap: () {
+                              Get.back();
+                              sendCarte(
+                                  userID: friend.userID!,
+                                  nickname: name,
+                                  faceURL: friend.faceURL);
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+      );
+    } catch (e) {
+      IMViews.showToast(e.toString());
+    }
   }
 
   void onTapAlbum() async {
@@ -616,6 +849,9 @@ class ChatLogic extends SuperController {
       switch (asset.type) {
         case AssetType.image:
           await sendPicture(path: path, sendNow: sendNow);
+          break;
+        case AssetType.video:
+          await sendVideo(path: path, entity: asset, sendNow: sendNow);
           break;
         default:
           break;

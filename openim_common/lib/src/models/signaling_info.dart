@@ -127,7 +127,7 @@ class SignalingCertificate {
   SignalingCertificate.fromJson(Map<String, dynamic> json) {
     token = json['token'];
     roomID = json['roomID'];
-    liveURL = json['liveURL'];
+    liveURL = json['liveURL'] ?? json['serverUrl'] ?? json['url'];
     busyLineUserIDList = json['busyLineUserIDList']?.cast<String>();
   }
 
@@ -170,7 +170,7 @@ class RoomCallingInfo {
     }
     roomID = json['roomID'] ?? invitation?.roomID;
     token = json['token'];
-    liveURL = json['liveURL'];
+    liveURL = json['liveURL'] ?? json['serverUrl'] ?? json['url'];
     groupID = json['groupID'];
   }
 

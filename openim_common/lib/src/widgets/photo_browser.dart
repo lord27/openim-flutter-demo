@@ -281,17 +281,19 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
       }
     });
 
-    unawaited(_cacheManager.downloadFile(widget.url!));
+    if (widget.url != null && widget.url!.isNotEmpty) {
+      unawaited(_cacheManager.downloadFile(widget.url!));
 
-    () async {
-      final fileInfo = await _cacheManager.getFileFromCache(widget.url!);
+      () async {
+        final fileInfo = await _cacheManager.getFileFromCache(widget.url!);
 
-      if (fileInfo?.file != null) {
-        player.open(Media(fileInfo!.file.path));
-      } else {
-        player.open(Media(widget.url!));
-      }
-    }();
+        if (fileInfo?.file != null) {
+          player.open(Media(fileInfo!.file.path));
+        } else {
+          player.open(Media(widget.url!));
+        }
+      }();
+    }
     media_kit_video_controls.kDefaultMaterialVideoControlsThemeDataFullscreen.copyWith();
   }
 

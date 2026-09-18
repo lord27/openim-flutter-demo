@@ -33,7 +33,8 @@ class SplashLogic extends GetxController {
   _login() async {
     try {
       Logger.print('---------login---------- userID: $userID, token: $token');
-      await imLogic.login(userID!, token!);
+      // 自动登录加超时：token 失效/网络不通时不再永久卡在启动页
+      await imLogic.login(userID!, token!).timeout(const Duration(seconds: 20));
       Logger.print('---------im login success-------');
       PushController.login(
         userID!,
@@ -47,7 +48,8 @@ class SplashLogic extends GetxController {
 
       AppNavigator.startSplashToMain(isAutoLogin: true, conversations: result);
     } catch (e, s) {
-      IMViews.showToast('$e $s');
+      Logger.print('---------auto login failed------- $e');
+      IMViews.showToast(StrRes.connectionFailed);
       await DataSp.removeLoginCertificate();
       AppNavigator.startLogin();
     }

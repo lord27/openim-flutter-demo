@@ -20,6 +20,7 @@ class DataSp {
   static const _chatBackground = '%s_chatBackground_%s';
   static const _loginType = 'loginType';
   static const _meetingInProgress = '%_meetingInProgress';
+  static const _openedRedPackets = '%s_openedRedPackets';
 
   DataSp._();
 
@@ -181,5 +182,14 @@ class DataSp {
 
   static Future<bool>? removeMeetingInProgress() {
     return SpUtil().remove(getKey(_meetingInProgress));
+  }
+
+  /// 已领取的红包记录（按当前登录用户隔离）
+  static List<String> getOpenedRedPackets() {
+    return SpUtil().getStringList(getKey(_openedRedPackets)) ?? [];
+  }
+
+  static Future<bool>? putOpenedRedPackets(List<String> packetIDs) {
+    return SpUtil().putStringList(getKey(_openedRedPackets), packetIDs);
   }
 }

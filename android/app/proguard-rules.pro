@@ -200,3 +200,13 @@
 -keep class io.openim.**{*;}
 -keep class open_im_sdk.**{*;}
 -keep class open_im_sdk_callback.**{*;}
+
+# ===== OpenIM Flutter demo 追加（2026-09-18）=====
+# gomobile 桥接层：JNI 按类名反射调用，混淆后会 NoSuchMethodError
+-keep class open_im_sdk.** { *; }
+-keep class io.openim.** { *; }
+# gson 反射（SDK model 序列化兜底）
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+-keepattributes Signature
+-dontwarn org.slf4j.**

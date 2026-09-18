@@ -7,7 +7,10 @@ import 'package:focus_detector_v2/focus_detector_v2.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'chat_card_view.dart';
+import 'chat_file_view.dart';
 import 'chat_notice_view.dart';
+import 'chat_video_view.dart';
 
 double maxWidth = 247.w;
 double pictureWidth = 120.w;
@@ -164,6 +167,24 @@ class _ChatItemViewState extends State<ChatItemView> {
     } else if (_message.isEmojiType) {
     } else if (_message.isTagType) {
     }*/
+    if (_message.isCustomType) {
+      // RTC 信令(200~204) 直接隐藏
+      if (_isRtcSignalingMessage(_message)) {
+        return const SizedBox.shrink();
+      }
+      // 走 CustomTypeInfo 渲染链路(通话记录/好友异常提示等)
+      final customInfo = widget.customTypeBuilder?.call(context, _message);
+      if (null == customInfo) {
+        // 没有可渲染的内容时不再显示“暂不支持的消息类型”
+        return const SizedBox.shrink();
+      }
+      if (!customInfo.needChatItemContainer) {
+        return customInfo.customView;
+      }
+      isBubbleBg = customInfo.needBubbleBackground;
+      child = customInfo.customView;
+    }
+
     if (_message.isTextType) {
       isBubbleBg = true;
       child = ChatText(
@@ -178,6 +199,23 @@ class _ChatItemViewState extends State<ChatItemView> {
             isISend: _isISend,
             message: _message,
           );
+    } else if (_message.isVideoType) {
+      isBubbleBg = false;
+      child = widget.mediaItemBuilder?.call(context, _message);
+    } else if (_message.isFileType) {
+      isBubbleBg = false;
+      child = ChatFileView(message: _message);
+    } else if (_message.isCardType) {
+      isBubbleBg = false;
+      child = ChatCardView(
+        message: _message,
+        onTap: () => widget.onTapUserProfile((
+          userID: _message.cardElem!.userID!,
+          name: _message.cardElem!.nickname!,
+          faceURL: _message.cardElem!.faceURL,
+          groupID: null,
+        )),
+      );
     } else if (_message.isNotificationType) {
       if (_message.contentType == MessageType.groupInfoSetAnnouncementNotification) {
         final map = json.decode(_message.notificationElem!.detail!);
@@ -195,6 +233,11 @@ class _ChatItemViewState extends State<ChatItemView> {
           ),
         );
       }
+    }
+
+    if (null == child) {
+      // 任何无法渲染的消息一律不显示占位文案
+      return const SizedBox.shrink();
     }
 
     senderNickname ??= widget.leftNickname ?? _message.senderNickname;
@@ -226,5 +269,22 @@ class _ChatItemViewState extends State<ChatItemView> {
         child: child ?? ChatText(text: StrRes.unsupportedMessage),
       ),
     );
+  }
+}
+
+bool _isRtcSignalingMessage(dynamic message) {
+  try {
+    final Object? raw = message.customElem?.data;
+    if (raw == null) return false;
+    final Object? parsed = json.decode(raw as String);
+    if (parsed is! Map) return false;
+    final Object? customType = parsed['customType'];
+    return customType == 200 ||
+        customType == 201 ||
+        customType == 202 ||
+        customType == 203 ||
+        customType == 204;
+  } catch (_) {
+    return false;
   }
 }

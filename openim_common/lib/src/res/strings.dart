@@ -258,6 +258,10 @@ class StrRes {
 
   static String get toolboxAlbum => 'toolboxAlbum'.tr;
 
+  static String get toolboxVideo => 'toolboxVideo'.tr;
+
+  static String get toolboxEmoji => 'toolboxEmoji'.tr;
+
   static String get toolboxCall => 'toolboxCall'.tr;
 
   static String get toolboxCamera => 'toolboxCamera'.tr;
@@ -267,6 +271,8 @@ class StrRes {
   static String get toolboxFile => 'toolboxFile'.tr;
 
   static String get toolboxLocation => 'toolboxLocation'.tr;
+
+  static String get toolboxRedPacket => 'toolboxRedPacket'.tr;
 
   static String get toolboxDirectionalMessage => 'toolboxDirectionalMessage'.tr;
 
@@ -573,6 +579,12 @@ class StrRes {
   static String get chinese => 'chinese'.tr;
 
   static String get followSystem => 'followSystem'.tr;
+
+  static String get followSystemHint => 'followSystemHint'.tr;
+
+  static String get currentLanguage => 'currentLanguage'.tr;
+
+  static String get languageSwitchHint => 'languageSwitchHint'.tr;
 
   static String get blacklistEmpty => 'blacklistEmpty'.tr;
 
@@ -1158,4 +1170,58 @@ class StrRes {
   static String get otherNetworkNotStableHint => 'otherNetworkNotStableHint'.tr;
   static String get callingInterruption => 'callingInterruption'.tr;
   static String get directedTo => 'directedTo'.tr;
+
+  // ===== 红包 =====
+  static String get redPacket => 'redPacket'.tr;
+
+  static String get sendRedPacket => 'sendRedPacket'.tr;
+
+  static String get redPacketGreeting => 'redPacketGreeting'.tr;
+
+  static String get redPacketAmount => 'redPacketAmount'.tr;
+
+  static String get redPacketCount => 'redPacketCount'.tr;
+
+  static String get luckyRedPacket => 'luckyRedPacket'.tr;
+
+  static String get normalRedPacket => 'normalRedPacket'.tr;
+
+  static String get openRedPacket => 'openRedPacket'.tr;
+
+  static String get redPacketOpened => 'redPacketOpened'.tr;
+
+  static String get redPacketFrom => 'redPacketFrom'.tr;
+
+  static String get redPacketDefaultGreeting => 'redPacketDefaultGreeting'.tr;
+
+  static String get plsEnterRedPacketAmount => 'plsEnterRedPacketAmount'.tr;
+
+  static String get redPacketAmountLimit => 'redPacketAmountLimit'.tr;
+
+  static String get redPacketCountLimit => 'redPacketCountLimit'.tr;
+
+  static String get redPacketBalance => 'redPacketBalance'.tr;
+
+  // ===== 位置 =====
+  static String get sendLocation => 'sendLocation'.tr;
+
+  static String get myLocation => 'myLocation'.tr;
+
+  static String get currentLocation => 'currentLocation'.tr;
+
+  static String get searchLocation => 'searchLocation'.tr;
+
+  static String get locationName => 'locationName'.tr;
+
+  static String get locationAddress => 'locationAddress'.tr;
+
+  static String get moveMapToSelect => 'moveMapToSelect'.tr;
+
+  static String get locating => 'locating'.tr;
+
+  static String get locationFailed => 'locationFailed'.tr;
+
+  static String get locationServiceDisabled => 'locationServiceDisabled'.tr;
+
+  static String get coordinate => 'coordinate'.tr;
 }

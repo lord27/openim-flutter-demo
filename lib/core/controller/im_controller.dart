@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,6 +15,22 @@ import '../im_callback.dart';
 class IMController extends GetxController with IMCallback, OpenIMLive {
   late Rx<UserFullInfo> userInfo;
   late String atAllTag;
+
+  // 连接看门狗：ws 长时间既不成也不败时，兜底置为「连接失败」，避免界面永久停在「连接中」
+  Timer? _connectWatchdog;
+
+  void _startConnectWatchdog() {
+    _connectWatchdog?.cancel();
+    _connectWatchdog = Timer(const Duration(seconds: 30), () {
+      Logger.print('connect watchdog fired -> connectionFailed');
+      imSdkStatus(IMSdkStatus.connectionFailed);
+    });
+  }
+
+  void _cancelConnectWatchdog() {
+    _connectWatchdog?.cancel();
+    _connectWatchdog = null;
+  }
 
   @override
   void onClose() {
@@ -40,11 +57,14 @@ class IMController extends GetxController with IMCallback, OpenIMLive {
       listener: OnConnectListener(
         onConnecting: () {
           imSdkStatus(IMSdkStatus.connecting);
+          _startConnectWatchdog();
         },
         onConnectFailed: (code, error) {
+          _cancelConnectWatchdog();
           imSdkStatus(IMSdkStatus.connectionFailed);
         },
         onConnectSuccess: () {
+          _cancelConnectWatchdog();
           imSdkStatus(IMSdkStatus.connectionSucceeded);
         },
         onKickedOffline: kickedOffline,
@@ -164,16 +184,24 @@ class IMController extends GetxController with IMCallback, OpenIMLive {
 
   Future login(String userID, String token) async {
     try {
-      var user = await OpenIM.iMManager.login(
-        userID: userID,
-        token: token,
-        defaultValue: () async => UserInfo(userID: userID),
-      );
+      var user = await OpenIM.iMManager
+          .login(
+            userID: userID,
+            token: token,
+            defaultValue: () async => UserInfo(userID: userID),
+          )
+          .timeout(const Duration(seconds: 25));
       userInfo = UserFullInfo.fromJson(user.toJson()).obs;
       _queryMyFullInfo();
       _queryAtAllTag();
     } catch (e, s) {
       Logger.print('e: $e  s:$s');
+      if (e is TimeoutException) {
+        // 登录请求长时间无响应：断开引擎，避免残留坏连接影响下次登录
+        try {
+          await OpenIM.iMManager.logout();
+        } catch (_) {}
+      }
       await _handleLoginRepeatError(e);
 
       return Future.error(e, s);
@@ -205,9 +233,23 @@ class IMController extends GetxController with IMCallback, OpenIMLive {
     }
   }
 
+  static const _reloginCodes = <String>{
+    '13002', // 已在别处登录
+    '1501',  // token 无效
+    '1502',  // token 过期
+    '1503',  // token 格式错误
+    '1505',  // token 未知
+    '1506',  // token 已被踢下线
+    '1507',  // 平台不一致
+    '1508',  // 已登出
+  };
+
   _handleLoginRepeatError(e) async {
-    if (e is PlatformException && (e.code == "13002" || e.code == '1507')) {
-      await logout();
+    if (e is PlatformException && _reloginCodes.contains(e.code)) {
+      Logger.print('need relogin, code=${e.code} -> clear certificate');
+      try {
+        await logout();
+      } catch (_) {}
       await DataSp.removeLoginCertificate();
     }
   }

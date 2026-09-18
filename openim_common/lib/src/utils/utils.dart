@@ -689,12 +689,18 @@ class IMUtils {
         case MessageType.picture:
           content = '[${StrRes.picture}]';
           break;
+        case MessageType.location:
+          content = '[${StrRes.location}]';
+          break;
         case MessageType.custom:
           var data = message.customElem!.data;
           var map = json.decode(data!);
           var customType = map['customType'];
 
           switch (customType) {
+            case CustomMessageType.redPacket:
+              content = '[${StrRes.redPacket}]';
+              break;
             case CustomMessageType.blockedByFriend:
               content = StrRes.blockedByFriendHint;
               break;
@@ -711,12 +717,12 @@ class IMUtils {
               content = StrRes.groupDisbanded;
               break;
             default:
-              content = '[${StrRes.unsupportedMessage}]';
+              content = '';
               break;
           }
           break;
         default:
-          content = '[${StrRes.unsupportedMessage}]';
+          content = '';
           break;
       }
     } catch (e, s) {
@@ -724,7 +730,7 @@ class IMUtils {
       Logger.print('Stack trace:\n $s');
     }
     content = content?.replaceAll("\n", " ");
-    return content ?? '[${StrRes.unsupportedMessage}]';
+    return content ?? '';
   }
 
   static dynamic parseCustomMessage(Message message) {
@@ -782,6 +788,9 @@ class IMUtils {
                 return map['data'];
               case CustomMessageType.tag:
                 map['data']['viewType'] = CustomMessageType.tag;
+                return map['data'];
+              case CustomMessageType.redPacket:
+                map['data']['viewType'] = CustomMessageType.redPacket;
                 return map['data'];
               case CustomMessageType.meeting:
                 map['data']['viewType'] = CustomMessageType.meeting;
@@ -951,14 +960,18 @@ class IMUtils {
         ? MediaSource(
             url: message.videoElem?.videoUrl,
             thumbnail: message.videoElem!.snapshotUrl?.adjustThumbnailAbsoluteString(960) ?? '',
-            file: File(message.videoElem!.videoPath!),
+            file: (message.videoElem?.videoPath?.isNotEmpty ?? false)
+                ? File(message.videoElem!.videoPath!)
+                : null,
             tag: message.clientMsgID,
             isVideo: true,
           )
         : MediaSource(
             url: message.pictureElem?.sourcePicture?.url,
             thumbnail: message.pictureElem!.snapshotPicture?.url?.adjustThumbnailAbsoluteString(960) ?? '',
-            file: File(message.pictureElem!.sourcePath!),
+            file: (message.pictureElem?.sourcePath?.isNotEmpty ?? false)
+                ? File(message.pictureElem!.sourcePath!)
+                : null,
             tag: message.clientMsgID,
           );
 

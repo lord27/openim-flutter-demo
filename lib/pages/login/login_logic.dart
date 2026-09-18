@@ -68,7 +68,8 @@ class LoginLogic extends GetxController with GetTickerProviderStateMixin {
   final isPasswordLogin = true.obs;
   final versionInfo = ''.obs;
   final loginType = LoginType.phone.obs;
-  String? get email => loginType.value == LoginType.email ? phoneCtrl.text.trim() : null;
+  String? get email =>
+      loginType.value == LoginType.email ? phoneCtrl.text.trim().toLowerCase() : null;
   String? get phone => loginType.value == LoginType.phone ? phoneCtrl.text.trim() : null;
   String? get account => loginType.value == LoginType.account ? phoneCtrl.text.trim() : null;
   LoginType operateType = LoginType.phone;

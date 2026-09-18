@@ -120,6 +120,8 @@ const Map<String, String> en_US = {
   "cancel": "Cancel",
   "determine": "OK",
   "toolboxAlbum": "Album",
+  "toolboxVideo": "Video",
+  "toolboxEmoji": "Emoji",
   "toolboxCall": "Video Call",
   "toolboxCamera": "Camera",
   "toolboxCard": "Card",

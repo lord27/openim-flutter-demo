@@ -120,6 +120,8 @@ const Map<String, String> zh_CN = {
   "cancel": "取消",
   "determine": "确定",
   "toolboxAlbum": "相册",
+  "toolboxVideo": "视频",
+  "toolboxEmoji": "表情",
   "toolboxCall": "视频通话",
   "toolboxCamera": "拍摄",
   "toolboxCard": "名片",

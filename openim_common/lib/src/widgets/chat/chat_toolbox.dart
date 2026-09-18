@@ -7,18 +7,50 @@ class ChatToolBox extends StatelessWidget {
     super.key,
     this.onTapAlbum,
     this.onTapCall,
+    this.onTapVideo,
+    this.onTapFile,
+    this.onTapCard,
+    this.onTapEmoji,
   });
   final Function()? onTapAlbum;
   final Function()? onTapCall;
+  final Function()? onTapVideo;
+  final Function()? onTapFile;
+  final Function()? onTapCard;
+  final Function()? onTapEmoji;
 
   @override
   Widget build(BuildContext context) {
     final items = [
+      if (onTapEmoji != null)
+        ToolboxItemInfo(
+          text: StrRes.toolboxEmoji,
+          icon: ImageRes.openEmoji,
+          onTap: onTapEmoji,
+        ),
       ToolboxItemInfo(
         text: StrRes.toolboxAlbum,
         icon: ImageRes.toolboxAlbum,
         onTap: () => Permissions.photos(onTapAlbum),
       ),
+      if (onTapVideo != null)
+        ToolboxItemInfo(
+          text: StrRes.toolboxVideo,
+          icon: ImageRes.toolboxCamera,
+          onTap: onTapVideo,
+        ),
+      if (onTapCard != null)
+        ToolboxItemInfo(
+          text: StrRes.toolboxCard,
+          icon: ImageRes.toolboxCard,
+          onTap: onTapCard,
+        ),
+      if (onTapFile != null)
+        ToolboxItemInfo(
+          text: StrRes.toolboxFile,
+          icon: ImageRes.toolboxFile,
+          onTap: onTapFile,
+        ),
       if (onTapCall != null)
         ToolboxItemInfo(
           text: StrRes.toolboxCall,
