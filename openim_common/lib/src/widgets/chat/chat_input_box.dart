@@ -101,6 +101,12 @@ class _ChatInputBoxState extends State<ChatInputBox> /*with TickerProviderStateM
                 child: Row(
                   children: [
                     12.horizontalSpace,
+                    ImageRes.openVoice.toImage
+                      ..width = 28.w
+                      ..height = 28.h
+                      ..opacity = _opacity
+                      ..onTap = _toggleVoice,
+                    12.horizontalSpace,
                     Expanded(
                       child: Stack(
                         children: [
@@ -178,6 +184,19 @@ class _ChatInputBoxState extends State<ChatInputBox> /*with TickerProviderStateM
         focus();
       }
     });
+  }
+
+  void _toggleVoice() {
+    if (!widget.enabled) return;
+    setState(() {
+      _leftKeyboardButton = !_leftKeyboardButton;
+      _toolsVisible = false;
+    });
+    if (_leftKeyboardButton) {
+      unfocus();
+    } else {
+      focus();
+    }
   }
 
   void onTapLeftKeyboard() {

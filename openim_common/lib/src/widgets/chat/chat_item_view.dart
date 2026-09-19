@@ -8,10 +8,11 @@ import 'package:openim_common/openim_common.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'chat_card_view.dart';
-import 'chat_location_view.dart';
 import 'chat_file_view.dart';
 import 'chat_notice_view.dart';
 import 'chat_video_view.dart';
+import 'chat_location_view.dart';
+import 'chat_voice_view.dart';
 
 double maxWidth = 247.w;
 double pictureWidth = 120.w;
@@ -205,6 +206,9 @@ class _ChatItemViewState extends State<ChatItemView> {
     } else if (_message.isVideoType) {
       isBubbleBg = false;
       child = widget.mediaItemBuilder?.call(context, _message);
+    } else if (_message.contentType == MessageType.voice) {
+      isBubbleBg = true;
+      child = ChatVoiceView(isISend: _isISend, message: _message);
     } else if (_message.contentType == MessageType.location) {
       isBubbleBg = false;
       child = ChatLocationView(

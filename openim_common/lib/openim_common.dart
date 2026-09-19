@@ -59,6 +59,8 @@ export 'src/widgets/chat/chat_timeline_view.dart';
 export 'src/widgets/chat/chat_toolbox.dart';
 export 'src/widgets/chat/chat_emoji_panel.dart';
 export 'src/widgets/chat/chat_file_view.dart';
+export 'src/widgets/chat/chat_voice_view.dart';
+export 'src/widgets/chat/sound_record_bar.dart';
 export 'src/widgets/chat/chat_card_view.dart';
 export 'src/widgets/chat/chat_video_view.dart';
 export 'src/widgets/chat/new_message_indicator.dart';

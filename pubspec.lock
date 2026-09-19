@@ -2576,6 +2576,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  video_thumbnail:
+    dependency: "direct main"
+    description:
+      name: video_thumbnail
+      sha256: "181a0c205b353918954a881f53a3441476b9e301641688a581e0c13f00dc588b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.6"
   visibility_detector:
     dependency: "direct main"
     description:
@@ -2697,7 +2705,7 @@ packages:
     source: hosted
     version: "9.8.0"
   wechat_camera_picker:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: wechat_camera_picker
       sha256: "9249a48902da1cacc03e40c49fd6b658d4ef1bd3890636e97d2d733f1576a3a8"

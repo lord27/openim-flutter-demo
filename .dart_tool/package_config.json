@@ -1946,6 +1946,12 @@
       "languageVersion": "3.6"
     },
     {
+      "name": "video_thumbnail",
+      "rootUri": "file:///C:/Users/admin/AppData/Local/Pub/Cache/hosted/pub.dev/video_thumbnail-0.5.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "visibility_detector",
       "rootUri": "file:///C:/Users/admin/AppData/Local/Pub/Cache/hosted/pub.dev/visibility_detector-0.4.0+2",
       "packageUri": "lib/",

@@ -36,6 +36,7 @@ class ChatPage extends StatelessWidget {
           logic.copyTextMap[message.clientMsgID] = text;
         },
         customTypeBuilder: _buildCustomTypeItemView,
+        onTapLocationView: logic.onTapViewLocation,
         patterns: <MatchPattern>[
           MatchPattern(
             type: PatternType.email,
@@ -184,12 +185,14 @@ class ChatPage extends StatelessWidget {
                             onTapAlbum: logic.onTapAlbum,
                             onTapCall: logic.isGroupChat ? null : logic.call,
                             onTapVideo: logic.onTapVideo,
+                            onTapCamera: logic.onTapCamera,
+                            onTapLocation: logic.onTapLocation,
                             onTapFile: logic.onTapFile,
                             onTapCard: logic.onTapCard,
                             onTapEmoji: logic.openEmojiPanel,
                           ),
                   ),
-                  voiceRecordBar: const SizedBox(),
+                  voiceRecordBar: SoundRecordBar(onFinished: logic.onVoiceRecordFinished),
                 ),
                 child: ChatListView(
                   onTouch: () => logic.closeToolbox(),
