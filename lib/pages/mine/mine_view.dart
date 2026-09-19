@@ -14,7 +14,8 @@ class MinePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.c_F8F9FA,
-      body: SingleChildScrollView(
+      body: ThemedBackground(
+        child: SingleChildScrollView(
         child: Column(
           children: [
             Stack(
@@ -53,6 +54,7 @@ class MinePage extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

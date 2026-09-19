@@ -22,6 +22,7 @@ class AppThemePalette {
   final Color bubbleOther; // 对方的气泡 c_F4F5F7
   final Color? backIcon; // 返回箭头颜色（暗色主题为浅色）
   final List<Color> appBarGradient; // 顶栏科技感渐变
+  final String? bgImage; // 主题背景图（assets 相对路径，经典蓝无）
 
   const AppThemePalette({
     required this.id,
@@ -38,6 +39,7 @@ class AppThemePalette {
     required this.bubbleSelf,
     required this.bubbleOther,
     this.backIcon,
+    this.bgImage,
     required this.appBarGradient,
   });
 
@@ -81,6 +83,7 @@ class AppThemePalettes {
     bubbleOther: Color(0xFF13263F),
     backIcon: Color(0xFFD7E7FF),
     appBarGradient: [Color(0xFF123047), Color(0xFF081120)],
+    bgImage: 'assets/images/theme_bg_cyber.jpg',
   );
 
   /// 矩阵绿洲（终端绿）
@@ -100,6 +103,7 @@ class AppThemePalettes {
     bubbleOther: Color(0xFF12241A),
     backIcon: Color(0xFFD6FFE6),
     appBarGradient: [Color(0xFF14301F), Color(0xFF060D08)],
+    bgImage: 'assets/images/theme_bg_matrix.jpg',
   );
 
   /// 霓虹脉冲（赛博紫粉）
@@ -119,6 +123,7 @@ class AppThemePalettes {
     bubbleOther: Color(0xFF221338),
     backIcon: Color(0xFFEBDCFF),
     appBarGradient: [Color(0xFF2A1442), Color(0xFF0E0718)],
+    bgImage: 'assets/images/theme_bg_neon.jpg',
   );
 
   /// 机甲赤焰（战斗红）
@@ -138,6 +143,7 @@ class AppThemePalettes {
     bubbleOther: Color(0xFF2A1216),
     backIcon: Color(0xFFFFE4E8),
     appBarGradient: [Color(0xFF3A1116), Color(0xFF120708)],
+    bgImage: 'assets/images/theme_bg_mecha.jpg',
   );
 
   /// 极地冰蓝（深空蓝）
@@ -157,6 +163,7 @@ class AppThemePalettes {
     bubbleOther: Color(0xFF13203A),
     backIcon: Color(0xFFDCEAFF),
     appBarGradient: [Color(0xFF16294A), Color(0xFF070D1A)],
+    bgImage: 'assets/images/theme_bg_ice.jpg',
   );
 
   static const all = [classic, cyberCyan, matrixGreen, neonPurple, mechaRed, iceBlue];
@@ -189,11 +196,33 @@ class AppThemeService extends ChangeNotifier {
 
   static AppThemeService get instance => _instance;
 
-  static void apply(AppThemePalette palette) {
+  /// 主题版本号：apply() 自增，GetMaterialApp 以此作 ValueKey 强制重建整树。
+  /// 页面颜色来自 Styles 静态 getter 且 Navigator 缓存页面实例，
+  /// 仅 notify/changeTheme 不会刷新已打开页面，必须换 key 重建。
+  static int version = 0;
+  static String? _remountInitial;
+  static String? _pushAfter;
+
+  static String? consumeRemountInitial() {
+    final r = _remountInitial;
+    _remountInitial = null;
+    return r;
+  }
+
+  static String? takePushAfter() {
+    final r = _pushAfter;
+    _pushAfter = null;
+    return r;
+  }
+
+  static void apply(AppThemePalette palette,
+      {String? remountInitial, String? pushAfter}) {
     _instance._current = palette;
     SpUtil().putString(_spKey, palette.id);
+    _remountInitial = remountInitial ?? Get.currentRoute;
+    _pushAfter = pushAfter;
+    version++;
     _instance.notifyListeners();
-    Get.forceAppUpdate();
   }
 
   static ThemeData buildTheme() {
@@ -263,6 +292,29 @@ class AppThemeService extends ChangeNotifier {
               TextStyle(color: p.textPrimary, fontSize: 17.sp),
         ),
       ),
+    );
+  }
+}
+
+
+/// 主题页面背景：包一层 body 即可获得当前主题的背景图（无背景图时透传 child）
+class ThemedBackground extends StatelessWidget {
+  final Widget child;
+
+  const ThemedBackground({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = AppThemeService.current.bgImage;
+    if (bg == null) return child;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(bg, package: 'openim_common'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: child,
     );
   }
 }

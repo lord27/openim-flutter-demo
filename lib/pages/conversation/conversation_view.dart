@@ -54,7 +54,8 @@ class ConversationPage extends StatelessWidget {
                   ],
                 ),
               )),
-          body: Column(
+          body: ThemedBackground(
+            child: Column(
             children: [
               Expanded(
                   child: ListView.builder(
@@ -66,6 +67,7 @@ class ConversationPage extends StatelessWidget {
                 ),
               ),
             ],
+          ),
           ),
         ));
   }

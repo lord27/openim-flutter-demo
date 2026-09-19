@@ -35,8 +35,16 @@ class _ChatAppState extends State<ChatApp> {
 
   @override
   Widget build(BuildContext context) {
+    final remountInitial = AppThemeService.consumeRemountInitial();
+    final pushAfter = AppThemeService.takePushAfter();
+    if (pushAfter != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (Get.currentRoute != pushAfter) Get.toNamed(pushAfter);
+      });
+    }
     return AppView(
       builder: (locale, builder) => GetMaterialApp(
+        key: ValueKey('app_theme_v${AppThemeService.version}'),
         debugShowCheckedModeBanner: false,
         enableLog: true,
         builder: builder,
@@ -55,7 +63,7 @@ class _ChatAppState extends State<ChatApp> {
         supportedLocales: const [Locale('zh', 'CN'), Locale('en', 'US')],
         getPages: AppPages.routes,
         initialBinding: InitBinding(),
-        initialRoute: AppRoutes.splash,
+        initialRoute: remountInitial ?? AppRoutes.splash,
         theme: AppThemeService.buildTheme(),
       ),
     );
@@ -65,8 +73,16 @@ class _ChatAppState extends State<ChatApp> {
 class InitBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put<IMController>(IMController());
-    Get.put<PushController>(PushController());
-    Get.put<CacheController>(CacheController());
+    // permanent + isRegistered 守卫：主题重建整树时复用实例，
+    // 避免 IM SDK 重复 init / 推送重复注册。
+    if (!Get.isRegistered<IMController>()) {
+      Get.put<IMController>(IMController(), permanent: true);
+    }
+    if (!Get.isRegistered<PushController>()) {
+      Get.put<PushController>(PushController(), permanent: true);
+    }
+    if (!Get.isRegistered<CacheController>()) {
+      Get.put<CacheController>(CacheController(), permanent: true);
+    }
   }
 }

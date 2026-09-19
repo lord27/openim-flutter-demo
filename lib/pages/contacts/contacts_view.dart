@@ -17,8 +17,9 @@ class ContactsPage extends StatelessWidget {
         onClickAddContacts: logic.addContacts,
       ),
       backgroundColor: Styles.c_F8F9FA,
-      body: Obx(
-        () => SingleChildScrollView(
+      body: ThemedBackground(
+        child: Obx(
+          () => SingleChildScrollView(
           child: Column(
             children: [
               _buildItemView(
@@ -47,6 +48,7 @@ class ContactsPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

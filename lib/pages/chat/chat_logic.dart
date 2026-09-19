@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'chat_location/location_picker_page.dart';
+import 'chat_location/location_view_page.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -9,15 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_openim_sdk/flutter_openim_sdk.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import 'package:wechat_camera_picker/wechat_camera_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:openim_live/openim_live.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -355,6 +359,22 @@ class ChatLogic extends SuperController {
     _sendMessage(message);
   }
 
+  Future onVoiceRecordFinished(int seconds, String path) async {
+    if (seconds < 1) {
+      IMViews.showToast('按住时间太短');
+      return;
+    }
+    try {
+      final message = await OpenIM.iMManager.messageManager.createSoundMessageFromFullPath(
+        soundPath: path,
+        duration: seconds,
+      );
+      await _sendMessage(message);
+    } catch (e) {
+      IMViews.showToast('语音发送失败: $e');
+    }
+  }
+
   Future sendPicture({required String path, bool sendNow = true}) async {
     final file = await IMUtils.compressImageAndGetFile(File(path));
 
@@ -378,7 +398,7 @@ class ChatLogic extends SuperController {
       'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAJ0lEQVR42u3NMQ0AAAwDoAqrf11VsWMJGCA9FoFAIBAIBAKBQPAlGAvy0B+nI4XhAAAAAElFTkSuQmCC';
 
   /// 生成一个真实存在的视频缩略图文件，返回其绝对路径（保证非空）。
-  Future<String> _buildVideoSnapshot({AssetEntity? entity}) async {
+  Future<String> _buildVideoSnapshot({AssetEntity? entity, String? videoPath}) async {
     Uint8List? bytes;
     var ext = 'png';
     if (entity != null) {
@@ -389,6 +409,22 @@ class ChatLogic extends SuperController {
         if (data != null && data.isNotEmpty) {
           bytes = data;
           ext = 'jpg';
+        }
+      } catch (_) {}
+    }
+    if (bytes == null && videoPath != null && videoPath.isNotEmpty) {
+      try {
+        final dir = await getTemporaryDirectory();
+        final thumb = await VideoThumbnail.thumbnailFile(
+          video: videoPath,
+          thumbnailPath: dir.path,
+          imageFormat: ImageFormat.JPEG,
+          quality: 85,
+          maxHeight: 480,
+        ).timeout(const Duration(seconds: 15));
+        if (thumb != null && thumb.isNotEmpty && File(thumb).existsSync()) {
+          Logger.print('--------video snapshot real-----$thumb');
+          return thumb;
         }
       } catch (_) {}
     }
@@ -424,7 +460,7 @@ class ChatLogic extends SuperController {
   }) async {
     final name = path.split('/').last;
     final duration = await _resolveVideoDuration(path, entity);
-    final snapshotPath = await _buildVideoSnapshot(entity: entity);
+    final snapshotPath = await _buildVideoSnapshot(entity: entity, videoPath: path);
     final message =
         await OpenIM.iMManager.messageManager.createVideoMessageFromFullPath(
       videoPath: path,
@@ -438,6 +474,125 @@ class ChatLogic extends SuperController {
       messageList.add(message);
       tempMessages.add(message);
     }
+  }
+
+  Future<void> onTapLocation() async {
+    try {
+      final result = await Get.to<dynamic>(() => LocationPickerPage());
+      if (result is Map) {
+        final lat = (result['lat'] as num?)?.toDouble();
+        final lng = (result['lng'] as num?)?.toDouble();
+        final desc = (result['desc'] as String?) ?? '';
+        if (lat == null || lng == null) return;
+        final message = await OpenIM.iMManager.messageManager.createLocationMessage(
+          latitude: lat,
+          longitude: lng,
+          description: desc,
+        );
+        _sendMessage(message);
+      }
+    } catch (e) {
+      IMViews.showToast('位置发送失败: $e');
+    }
+  }
+
+  void onTapViewLocation(Message message) {
+    final elem = message.locationElem;
+    if (elem == null) return;
+    Get.to(() => LocationViewPage(
+      latitude: elem.latitude ?? 0,
+      longitude: elem.longitude ?? 0,
+      description: elem.description ?? '',
+    ));
+  }
+
+  Future<void> onTapCamera() async {
+    if (_sendingVideo) return;
+    try {
+      final cam = await Permission.camera.request();
+      if (!cam.isGranted) {
+        IMViews.showToast('请先授予相机权限');
+        return;
+      }
+    } catch (_) {}
+    final isVideo = await _pickCameraMode();
+    if (isVideo == null) return;
+    try {
+      final picker = ImagePicker();
+      XFile? xfile;
+      if (isVideo) {
+        try {
+          final mic = await Permission.microphone.request();
+          if (!mic.isGranted) {
+            IMViews.showToast('录制视频需要麦克风权限');
+            return;
+          }
+        } catch (_) {}
+        xfile = await picker.pickVideo(
+          source: ImageSource.camera,
+          maxDuration: const Duration(minutes: 5),
+        );
+      } else {
+        xfile = await picker.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 90,
+        );
+      }
+      if (xfile == null) return;
+      final path = xfile.path;
+      if (path.isEmpty || !File(path).existsSync()) {
+        IMViews.showToast('拍摄文件不可用');
+        return;
+      }
+      if (isVideo) {
+        _sendingVideo = true;
+        try {
+          await sendVideo(path: path);
+        } finally {
+          _sendingVideo = false;
+        }
+      } else {
+        await sendPicture(path: path);
+      }
+    } catch (e) {
+      IMViews.showToast('拍摄失败: $e');
+    }
+  }
+
+  /// 弹出拍摄方式选择：null=取消；true=拍视频；false=拍照片。
+  /// 使用系统相机意图（image_picker），不再依赖相册保存/AssetEntity。
+  Future<bool?> _pickCameraMode() async {
+    return await Get.bottomSheet<bool>(
+      Container(
+        color: Styles.c_surface,
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.photo_camera, color: Styles.c_0089FF),
+                title: Text('拍摄照片', style: Styles.ts_0C1C33_17sp),
+                onTap: () => Get.back(result: false),
+              ),
+              Divider(height: 1, color: Styles.c_E8EAEF),
+              ListTile(
+                leading: Icon(Icons.videocam, color: Styles.c_0089FF),
+                title: Text('拍摄视频', style: Styles.ts_0C1C33_17sp),
+                onTap: () => Get.back(result: true),
+              ),
+              Divider(height: 1, color: Styles.c_E8EAEF),
+              ListTile(
+                title: Center(
+                  child: Text(StrRes.cancel, style: Styles.ts_8E9AB0_17sp),
+                ),
+                onTap: () => Get.back(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   sendForwardRemarkMsg(

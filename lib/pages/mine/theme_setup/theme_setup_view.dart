@@ -6,31 +6,37 @@ import 'package:openim_common/openim_common.dart';
 import 'theme_setup_logic.dart';
 
 class ThemeSetupPage extends StatelessWidget {
-  final logic = Get.find<ThemeSetupLogic>();
-
   ThemeSetupPage({super.key});
+
+  final ThemeSetupLogic logic = Get.find<ThemeSetupLogic>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TitleBar.back(title: StrRes.themeAppearance),
       backgroundColor: Styles.c_F8F9FA,
-      body: Obx(() => GridView.builder(
-            padding: EdgeInsets.all(16.w),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12.w,
-              crossAxisSpacing: 12.w,
-              childAspectRatio: 0.82,
-            ),
-            itemCount: logic.palettes.length,
-            itemBuilder: (context, i) => _buildCard(logic.palettes[i]),
-          )),
+      body: Obx(() {
+        // 注意：必须在 Obx 闭包内同步读取 observable（currentId.value），
+        // 否则 GridView.builder 的懒加载 itemBuilder 在 Obx 作用域外才执行，
+        // 会导致 "improper use of Obx" 运行时异常 → release 下整页灰屏。
+        final selectedId = logic.currentId.value;
+        return GridView.builder(
+          padding: EdgeInsets.all(16.w),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12.w,
+            crossAxisSpacing: 12.w,
+            childAspectRatio: 0.82,
+          ),
+          itemCount: logic.palettes.length,
+          itemBuilder: (context, i) => _buildCard(logic.palettes[i], selectedId),
+        );
+      }),
     );
   }
 
-  Widget _buildCard(AppThemePalette p) {
-    final selected = logic.currentId.value == p.id;
+  Widget _buildCard(AppThemePalette p, String selectedId) {
+    final selected = selectedId == p.id;
     return GestureDetector(
       onTap: () => logic.switchTheme(p),
       child: Container(
@@ -55,6 +61,12 @@ class ThemeSetupPage extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: p.appBarGradient,
                   ),
+                  image: p.bgImage == null
+                      ? null
+                      : DecorationImage(
+                          image: AssetImage(p.bgImage!, package: 'openim_common'),
+                          fit: BoxFit.cover,
+                        ),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Center(
