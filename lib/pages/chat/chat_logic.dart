@@ -506,6 +506,43 @@ class ChatLogic extends SuperController {
     ));
   }
 
+  /// 打开发红包面板，确认后以自定义消息(914)发送
+  Future<void> onTapRedPacket() async {
+    final context = Get.context;
+    if (null == context) return;
+    final info = await RedPacketSendSheet.show(
+      context,
+      isGroup: isGroupChat,
+      senderID: OpenIM.iMManager.userInfo.userID,
+      senderName: OpenIM.iMManager.userInfo.nickname,
+    );
+    if (null == info) return;
+    sendCustomMsg(
+      data: json.encode({
+        'customType': CustomMessageType.redPacket,
+        'data': info.toMap(),
+      }),
+      extension: '',
+      description: '[${StrRes.redPacket}]',
+    );
+  }
+
+  /// 点击红包气泡：拆红包并本地记录已领取
+  Future<void> onTapViewRedPacket(Message message) async {
+    final context = Get.context;
+    final raw = message.customElem?.data;
+    if (null == context || null == raw || raw.isEmpty) return;
+    try {
+      final map = json.decode(raw) as Map<String, dynamic>;
+      final payload = map['data'];
+      if (payload is! Map) return;
+      await RedPacketOpenDialog.show(context, RedPacketInfo.fromMap(payload));
+      messageList.refresh();
+    } catch (e) {
+      Logger.print('open red packet failed: $e');
+    }
+  }
+
   Future<void> onTapCamera() async {
     if (_sendingVideo) return;
     try {

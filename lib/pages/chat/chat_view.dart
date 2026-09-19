@@ -37,6 +37,7 @@ class ChatPage extends StatelessWidget {
         },
         customTypeBuilder: _buildCustomTypeItemView,
         onTapLocationView: logic.onTapViewLocation,
+        onTapRedPacketView: logic.onTapViewRedPacket,
         patterns: <MatchPattern>[
           MatchPattern(
             type: PatternType.email,
@@ -190,6 +191,7 @@ class ChatPage extends StatelessWidget {
                             onTapFile: logic.onTapFile,
                             onTapCard: logic.onTapCard,
                             onTapEmoji: logic.openEmojiPanel,
+                            onTapRedPacket: logic.onTapRedPacket,
                           ),
                   ),
                   voiceRecordBar: SoundRecordBar(onFinished: logic.onVoiceRecordFinished),

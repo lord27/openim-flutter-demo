@@ -103,6 +103,12 @@ class _SoundRecordBarState extends State<SoundRecordBar> {
         return;
       }
     } catch (_) {}
+    // 上一次的录音会话可能没释放干净（残留是最常见的「一直没声音」诱因），
+    // 开新的之前先释放
+    try {
+      await _recorder?.dispose();
+    } catch (_) {}
+    _recorder = null;
     bool ok = false;
     try {
       _recorder = VoiceRecord(

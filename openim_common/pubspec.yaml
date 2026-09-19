@@ -53,6 +53,7 @@ dependencies:
   dart_date: ^1.1.1
   video_compress: ^3.1.2
   just_audio: ^0.10.5
+  audio_session: ^0.1.25
   webview_flutter: ^4.10.0
   webview_flutter_wkwebview: ^3.17.0
   webview_flutter_android: ^4.3.1
@@ -107,7 +108,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   hive_generator: ^2.0.1
-  build_runner: ^2.4.15
+  build_runner: ^2.4.13
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

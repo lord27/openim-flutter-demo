@@ -35,6 +35,12 @@ class Styles {
   static const Color c_FFE1DD = Color(0xFFFFE1DD);
   static const Color c_707070 = Color(0xFF707070);
 
+  // ---------- 红包 ----------
+  static const Color c_FA5151 = Color(0xFFFA5151);
+  static const Color c_FFE6B0 = Color(0xFFFFE6B0);
+  static const Color c_C93B32 = Color(0xFFC93B32);
+  static const Color c_FFF3E0 = Color(0xFFFFF3E0);
+
   // ---------- 透明度派生 ----------
   static Color get c_92B3E0_opacity50 => c_92B3E0.withOpacity(.5);
   static Color get c_E8EAEF_opacity50 => c_E8EAEF.withOpacity(.5);

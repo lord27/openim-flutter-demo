@@ -51,9 +51,21 @@ class VoiceRecord {
   Timer? _timer;
   Timer? _ampTimer;
   double _maxAmp = 0;
+  double _maxDb = -160;
 
   /// 本次录音期间出现过的最大振幅（0~1），用于静音诊断
   double get lastMaxAmplitude => _maxAmp;
+
+  /// 本次录音期间的最大真实电平（dBFS，如 -160 静音 / -20 正常说话）
+  double get lastMaxDb => _maxDb;
+
+  /// dBFS -> 0.0~1.0。
+  /// 插件返回的 Amplitude.current 是 dBFS 负值（-160 静音，0 满刻度），
+  /// 早期版本直接 clamp(0,1) 会把负数全部压成 0，导致音波永远不动。
+  static double dbToLevel(double db) {
+    if (!db.isFinite) return 0.0;
+    return (1 + db / 60.0).clamp(0.0, 1.0).toDouble();
+  }
 
   VoiceRecord({
     required this.maxRecordSec,
@@ -70,6 +82,12 @@ class VoiceRecord {
       if (!await _audioRecorder.hasPermission()) return false;
       var path = (await getApplicationDocumentsDirectory()).path;
       _path = '$path/$_dir/$_tag$_ext';
+      // 目录必须存在：MediaRecorder.setOutputFile 不会创建父目录，
+      // 父目录缺失时 prepare() 直接抛 IOException（录音整体起不来）
+      final dir = Directory('$path/$_dir');
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
       // 不预创建空文件：删除旧残留，避免 MediaRecorder 对已存在文件的边界问题
       final file = File(_path);
       if (await file.exists()) {
@@ -80,15 +98,18 @@ class VoiceRecord {
       await _audioRecorder.start(
         RecordConfig(
           encoder: AudioEncoder.aacLc,
-          sampleRate: 44100,
+          // 语音消息场景：16k 单声道 + 64kbps（约 8KB/s），
+          // 兼容性明显好于 44.1k/128k，VOICE_COMMUNICATION 源下尤其稳
+          sampleRate: 16000,
           numChannels: 1,
-          bitRate: 128000,
+          bitRate: 64000,
           androidConfig: AndroidRecordConfig(audioSource: _sources[_srcIdx]),
         ),
         path: _path,
       );
       _startTimestamp = _now();
       _maxAmp = 0;
+      _maxDb = -160;
       _timer?.cancel();
       _timer = null;
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
@@ -104,7 +125,9 @@ class VoiceRecord {
       _ampTimer = Timer.periodic(const Duration(milliseconds: 100), (_) async {
         try {
           final a = await _audioRecorder.getAmplitude();
-          final v = (a.current.isNaN ? 0.0 : a.current).clamp(0.0, 1.0).toDouble();
+          final db = a.current; // dBFS，-160=静音/无数据，0=满刻度
+          if (db.isFinite && db > _maxDb) _maxDb = db;
+          final v = dbToLevel(db);
           if (v > _maxAmp) _maxAmp = v;
           onAmplitude?.call(v);
         } catch (_) {}
@@ -122,22 +145,27 @@ class VoiceRecord {
     _timer = null;
     _ampTimer?.cancel();
     _ampTimer = null;
-    if (await _audioRecorder.isRecording()) {
+    final recording = await _audioRecorder.isRecording();
+    if (recording) {
       await _audioRecorder.stop();
-      if (isInterrupt) return;
-      final sec = (_now() - _startTimestamp) ~/ 1000;
-      final f = File(_path);
-      final len = await f.exists() ? await f.length() : 0;
-      debugPrint('voice rec stop: src=${_sourceNames[_srcIdx]} '
-          'sec=$sec bytes=$len maxAmp=$_maxAmp');
-      // 静音/未录上检测：正常 AAC 录音约 16KB/s；
-      // 麦克风被占用时文件只有几百字节（实测 0.07s/4.4KB），此时不发送并提示
-      if (len < 2000 || (sec > 0 && len < sec * 1200)) {
-        onError?.call('mic_silent');
-        return;
-      }
-      onFinished(sec, _path);
     }
+    await dispose();
+    if (!recording || isInterrupt) return;
+    final sec = (_now() - _startTimestamp) ~/ 1000;
+    final f = File(_path);
+    final len = await f.exists() ? await f.length() : 0;
+    debugPrint('voice rec stop: src=${_sourceNames[_srcIdx]} '
+        'sec=$sec bytes=$len maxDb=$_maxDb maxAmp=$_maxAmp');
+    // 静音/未录上检测：64kbps AAC ≈ 8KB/s，这里按 400B/s 兜底（留 20 倍余量）
+    final tooSmall = len < 1024 || (sec >= 1 && len < sec * 400);
+    // 采到可辨识声音（-45dB 以上≈正常说话）就不判静音。
+    // 旧实现用 clamp 后的 0~1 判定，dBFS 负数被压成 0，正常录音也会被误杀
+    final heardSomething = _maxDb > -45;
+    if (tooSmall && !heardSomething) {
+      onError?.call('mic_silent');
+      return;
+    }
+    onFinished(sec, _path);
   }
 
   /// 取消录音：停止并删除临时文件，不触发 onFinished。
@@ -154,6 +182,15 @@ class VoiceRecord {
       if (await f.exists()) {
         await f.delete();
       }
+    } catch (_) {}
+    await dispose();
+  }
+
+  /// 释放录音器。每次录音都是新建的 AudioRecorder，不释放会持续堆积原生
+  /// 会话，是「第一次能录、后面一直没声音」的常见诱因。
+  Future<void> dispose() async {
+    try {
+      await _audioRecorder.dispose();
     } catch (_) {}
   }
 

@@ -13,6 +13,7 @@ import 'chat_notice_view.dart';
 import 'chat_video_view.dart';
 import 'chat_location_view.dart';
 import 'chat_voice_view.dart';
+import 'chat_red_packet_view.dart';
 
 double maxWidth = 247.w;
 double pictureWidth = 120.w;
@@ -74,6 +75,7 @@ class ChatItemView extends StatefulWidget {
     this.itemViewBuilder,
     this.customTypeBuilder,
     this.onTapLocationView,
+    this.onTapRedPacketView,
     this.notificationTypeBuilder,
     this.sendStatusSubject,
     this.visibilityChange,
@@ -102,6 +104,7 @@ class ChatItemView extends StatefulWidget {
   final ItemViewBuilder? itemViewBuilder;
   final CustomTypeBuilder? customTypeBuilder;
   final Function(Message message)? onTapLocationView;
+  final Function(Message message)? onTapRedPacketView;
   final NotificationTypeBuilder? notificationTypeBuilder;
 
   final Subject<MsgStreamEv<bool>>? sendStatusSubject;
@@ -138,6 +141,19 @@ class _ChatItemViewState extends State<ChatItemView> {
   Message get _message => widget.message;
 
   bool get _isISend => _message.sendID == OpenIM.iMManager.userID;
+
+  /// 是否为红包消息（自定义类型 914）
+  bool get _isRedPacketMessage {
+    try {
+      final raw = _message.customElem?.data;
+      if (null == raw || raw.isEmpty) return false;
+      final parsed = json.decode(raw);
+      return parsed is Map &&
+          parsed['customType'] == CustomMessageType.redPacket;
+    } catch (_) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,17 +192,27 @@ class _ChatItemViewState extends State<ChatItemView> {
       if (_isRtcSignalingMessage(_message)) {
         return const SizedBox.shrink();
       }
-      // 走 CustomTypeInfo 渲染链路(通话记录/好友异常提示等)
-      final customInfo = widget.customTypeBuilder?.call(context, _message);
-      if (null == customInfo) {
-        // 没有可渲染的内容时不再显示“暂不支持的消息类型”
-        return const SizedBox.shrink();
+      if (_isRedPacketMessage) {
+        // 红包消息(自定义类型 914)
+        isBubbleBg = false;
+        child = ChatRedPacketView(
+          isISend: _isISend,
+          message: _message,
+          onTapView: () => widget.onTapRedPacketView?.call(_message),
+        );
+      } else {
+        // 走 CustomTypeInfo 渲染链路(通话记录/好友异常提示等)
+        final customInfo = widget.customTypeBuilder?.call(context, _message);
+        if (null == customInfo) {
+          // 没有可渲染的内容时不再显示“暂不支持的消息类型”
+          return const SizedBox.shrink();
+        }
+        if (!customInfo.needChatItemContainer) {
+          return customInfo.customView;
+        }
+        isBubbleBg = customInfo.needBubbleBackground;
+        child = customInfo.customView;
       }
-      if (!customInfo.needChatItemContainer) {
-        return customInfo.customView;
-      }
-      isBubbleBg = customInfo.needBubbleBackground;
-      child = customInfo.customView;
     }
 
     if (_message.isTextType) {

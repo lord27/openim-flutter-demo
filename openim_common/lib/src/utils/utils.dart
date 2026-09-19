@@ -689,6 +689,9 @@ class IMUtils {
         case MessageType.picture:
           content = '[${StrRes.picture}]';
           break;
+        case MessageType.voice:
+          content = '[${StrRes.voice}]';
+          break;
         case MessageType.location:
           content = '[${StrRes.toolboxLocation}]';
           break;
@@ -698,6 +701,9 @@ class IMUtils {
           var customType = map['customType'];
 
           switch (customType) {
+            case CustomMessageType.redPacket:
+              content = '[${StrRes.redPacket}]';
+              break;
             case CustomMessageType.blockedByFriend:
               content = StrRes.blockedByFriendHint;
               break;
@@ -788,6 +794,9 @@ class IMUtils {
                 return map['data'];
               case CustomMessageType.meeting:
                 map['data']['viewType'] = CustomMessageType.meeting;
+                return map['data'];
+              case CustomMessageType.redPacket:
+                map['data']['viewType'] = CustomMessageType.redPacket;
                 return map['data'];
               case CustomMessageType.deletedByFriend:
               case CustomMessageType.blockedByFriend:

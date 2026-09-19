@@ -12,6 +12,8 @@ class ChatToolBox extends StatelessWidget {
     this.onTapCard,
     this.onTapEmoji,
     this.onTapLocation,
+    this.onTapRedPacket,
+    this.onTapCamera,
   });
   final Function()? onTapAlbum;
   final Function()? onTapCall;
@@ -20,6 +22,8 @@ class ChatToolBox extends StatelessWidget {
   final Function()? onTapCard;
   final Function()? onTapEmoji;
   final Function()? onTapLocation;
+  final Function()? onTapRedPacket;
+  final Function()? onTapCamera;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,12 @@ class ChatToolBox extends StatelessWidget {
           icon: ImageRes.toolboxCamera,
           onTap: onTapVideo,
         ),
+      if (onTapCamera != null)
+        ToolboxItemInfo(
+          text: StrRes.toolboxCamera,
+          iconData: Icons.photo_camera,
+          onTap: () => Permissions.camera(onTapCamera),
+        ),
       if (onTapCard != null)
         ToolboxItemInfo(
           text: StrRes.toolboxCard,
@@ -58,6 +68,13 @@ class ChatToolBox extends StatelessWidget {
           text: StrRes.toolboxLocation,
           icon: ImageRes.toolboxLocation1,
           onTap: onTapLocation,
+        ),
+      if (onTapRedPacket != null)
+        ToolboxItemInfo(
+          text: StrRes.toolboxRedPacket,
+          iconData: Icons.card_giftcard,
+          iconColor: Styles.c_FA5151,
+          onTap: onTapRedPacket,
         ),
       if (onTapCall != null)
         ToolboxItemInfo(
@@ -88,6 +105,8 @@ class ChatToolBox extends StatelessWidget {
           final item = items.elementAt(index);
           return _buildItemView(
             icon: item.icon,
+            iconData: item.iconData,
+            iconColor: item.iconColor,
             text: item.text,
             onTap: item.onTap,
           );
@@ -98,15 +117,35 @@ class ChatToolBox extends StatelessWidget {
 
   Widget _buildItemView({
     required String text,
-    required String icon,
+    String? icon,
+    IconData? iconData,
+    Color? iconColor,
     Function()? onTap,
   }) =>
       Column(
         children: [
-          icon.toImage
-            ..width = 58.w
-            ..height = 58.h
-            ..onTap = onTap,
+          if (null != iconData)
+            GestureDetector(
+              onTap: onTap,
+              child: Container(
+                width: 58.w,
+                height: 58.h,
+                decoration: BoxDecoration(
+                  color: Styles.c_FFFFFF,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(
+                  iconData,
+                  size: 30.w,
+                  color: iconColor ?? Styles.c_0089FF,
+                ),
+              ),
+            )
+          else
+            icon!.toImage
+              ..width = 58.w
+              ..height = 58.h
+              ..onTap = onTap,
           10.verticalSpace,
           text.toText..style = Styles.ts_0C1C33_12sp,
         ],
@@ -115,8 +154,16 @@ class ChatToolBox extends StatelessWidget {
 
 class ToolboxItemInfo {
   String text;
-  String icon;
+  String? icon;
+  IconData? iconData;
+  Color? iconColor;
   Function()? onTap;
 
-  ToolboxItemInfo({required this.text, required this.icon, this.onTap});
+  ToolboxItemInfo({
+    required this.text,
+    this.icon,
+    this.iconData,
+    this.iconColor,
+    this.onTap,
+  });
 }

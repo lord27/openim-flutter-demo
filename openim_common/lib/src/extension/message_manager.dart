@@ -112,6 +112,9 @@ class CustomMessageType {
   static const deletedByFriend = 911;
   static const removedFromGroup = 912;
   static const groupDisbanded = 913;
+
+  /// 红包消息（自定义类型）
+  static const redPacket = 914;
 }
 
 extension PublicUserInfoExt on PublicUserInfo {

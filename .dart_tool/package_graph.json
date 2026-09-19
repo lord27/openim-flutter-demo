@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "openim",
-      "version": "3.8.29+261",
+      "version": "3.8.30+262",
       "dependencies": [
         "animated_text_kit",
         "app_badge_plus",
@@ -335,6 +335,13 @@
       "dependencies": [
         "flutter",
         "flutter_spinkit"
+      ]
+    },
+    {
+      "name": "video_thumbnail",
+      "version": "0.5.6",
+      "dependencies": [
+        "flutter"
       ]
     },
     {
@@ -3383,13 +3390,6 @@
         "collection",
         "meta",
         "pub_semver"
-      ]
-    },
-    {
-      "name": "video_thumbnail",
-      "version": "0.5.6",
-      "dependencies": [
-        "flutter"
       ]
     }
   ],
